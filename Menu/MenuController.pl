@@ -69,7 +69,7 @@ opcoes_pagina_do_usuario(Escolha) :-
     (   Escolha_Minuscula == "v" -> catalogo;
         Escolha_Minuscula == "a" -> acessar_carrinho;
         Escolha_Minuscula == "f" -> finalizar_compra;
-        Escolha_Minuscula == "s" -> sair;
+        Escolha_Minuscula == "s" -> adeus;
         mostrar_tente_novamente,
         pagina_do_usuario ).
     
@@ -127,5 +127,9 @@ login_falhou :-
     sleep(1),
     menu_inicial.
 
+adeus :-
+    imprimir_arquivo_completo('SpritesMenu/adeus.txt'),
+    sleep(1.5),
+    halt.
 
 :- menu_inicial.
