@@ -1,0 +1,131 @@
+:- use_module('../utils.pl').
+
+% MENU INICIAL-------------------------------------------------------------------------------
+menu_inicial :-
+    imprimir_arquivo_completo('SpritesMenu/start_menu.txt'),
+    write("Digite uma opção: "),
+    read_line_to_string(user_input, Escolha),
+    opcoes_menu_inicial(Escolha).
+
+opcoes_menu_inicial(Escolha) :-
+    string_lower(Escolha, Escolha_minuscula),
+    (Escolha_minuscula == "l" 
+        -> menu_login;
+    Escolha_minuscula == "c" 
+        -> menu_cadastro;
+    mostrar_tente_novamente,
+    menu_inicial).
+
+% LOGIN ----------------------------------------------------------------------------------
+menu_login :-
+    imprimir_arquivo_completo('SpritesMenu/Login/faca_login.txt'),
+    sleep(1.0),
+
+    imprimir_arquivo_completo('SpritesMenu/Login/login_menu_email.txt'),
+    write("Digite seu email: "),
+    read_line_to_string(user_input, Email),
+
+    imprimir_arquivo_completo('SpritesMenu/Login/login_menu_senha.txt'),
+    write("Digite sua senha: "),
+    read_line_to_string(user_input, Senha),
+
+    fazer_login(Email, Senha). 
+
+fazer_login(Email, Senha) :-
+    (   verificar_usuario(Email, Senha) -> login_realizado;
+        login_falhou).
+
+login_realizado:-
+    sleep(0.8),
+    imprimir_arquivo_completo('SpritesMenu/Login/login_feito_feliz_menu.txt'),
+    sleep(1.0),
+    pagina_do_usuario.
+
+%-CADASTRO---------------------------------------------------------------------------------
+menu_cadastro :-
+    imprimir_arquivo_completo('SpritesMenu/Cadastro/cadastro_nome_menu.txt'),
+    write("Digite seu nome: "),
+    read_line_to_string(user_input , Nome),
+
+    imprimir_arquivo_completo('SpritesMenu/Cadastro/cadastro_email_menu.txt'),
+    write("Digite seu email: "),
+    read_line_to_string(user_input , Email),
+
+    imprimir_arquivo_completo('SpritesMenu/Cadastro/cadastro_senha_menu.txt'),
+    write("Digite seu nome: "),
+    read_line_to_string(user_input , Senha),
+
+    cadastrar_novo_usuario(Email, Senha).
+
+%-PAGINA DO USUARIO -----------------------------------------------------------------------
+pagina_do_usuario :-
+    imprimir_arquivo_completo('SpritesMenu/pagina_do_usuario.txt'),
+    write("Para onde desenha ir? "),
+    read_line_to_string(user_input, Escolha),
+    opcoes_pagina_do_usuario(Escolha).
+
+opcoes_pagina_do_usuario(Escolha) :-
+    string_lower(Escolha, Escolha_Minuscula),
+    (   Escolha_Minuscula == "v" -> catalogo;
+        Escolha_Minuscula == "a" -> acessar_carrinho;
+        Escolha_Minuscula == "f" -> finalizar_compra;
+        Escolha_Minuscula == "s" -> sair;
+        mostrar_tente_novamente,
+        pagina_do_usuario ).
+    
+
+
+cadastrar_novo_usuario(Email, Senha) :-
+    (verificar_email(Email) -> usuario_ja_cadastrado;
+        cadastrar_usuario(Email, Senha),
+        cadastro_realizado ).
+
+cadastrar_usuario(Email, Senha) :-
+    open('SystemData/usuarios.txt', append, Stream),
+    format(Stream, "~w:~w~n", [Email, Senha]),
+    close(Stream).
+
+
+% VERIFICAÇÕES -------------------------------------------------------------------------------- 
+verificar_usuario(Email, Senha) :-
+    read_file_to_string('../SystemData/usuarios.txt', Conteudo, []),
+    split_string(Conteudo, "\n", "", Linhas),
+    member(Linha, Linhas),
+    split_string(Linha, ":", "", [EmailArquivo, SenhaArquivo]),
+    Email == EmailArquivo,
+    Senha == SenhaArquivo.
+
+verificar_email(Email) :-
+    read_file_to_string('../SystemData/usuarios.txt', Conteudo, []),
+    split_string(Conteudo, "\n", "", Linhas),
+    member(Linha, Linhas),
+    split_string(Linha, ":", "", [EmailArquivo|_]),
+    Email == EmailArquivo,
+    !.
+
+% EXCESSÕES E INTERMEIOS ------------------------------------------------------------------------------------
+
+mostrar_tente_novamente :-
+    imprimir_arquivo_completo('tente_novamente.txt').
+
+usuario_ja_cadastrado :-
+    imprimir_arquivo_completo('SpritesMenu/Cadastro/usuario_ja_existe.txt'),
+    sleep(1.0),
+    menu_inicial.
+
+cadastro_realizado :-
+    imprimir_arquivo_completo('SpritesMenu/Cadastro/cadastro_realizado.txt'),
+    sleep(0.8),
+    imprimir_arquivo_completo('SpritesMenu/Login/faca_login.txt'),
+    sleep(0.8),
+    menu_inicial.
+
+login_falhou :-
+    imprimir_arquivo_completo('SpritesMenu/Login/login_falhou_triste_menu.txt'),
+    sleep(1),
+    imprimir_arquivo_completo('SpritesMenu/tente_novamente.txt'),
+    sleep(1),
+    menu_inicial.
+
+
+:- menu_inicial.
