@@ -5,9 +5,12 @@
 
 % Auxiliares
 
+% Formato do produto:
+% produto(Id, Nome, Preco, Descricao, Estoque, Categoria)
+
 % buscar_produto(+ProdutoID, +Catalogo, -Produto)
-buscar_produto(ProdutoID, Catalogo, produto(ProdutoID, Nome, Preco, Desc, Estoque)) :-
-    member(produto(ProdutoID, Nome, Preco, Desc, Estoque), Catalogo), !.
+buscar_produto(ProdutoID, Catalogo, produto(ProdutoID, Nome, Preco, Desc, Estoque, Categoria)) :-
+    member(produto(ProdutoID, Nome, Preco, Desc, Estoque, Categoria), Catalogo), !.
 
 % buscar_quantidade_atual(+ProdutoID, +Carrinho, -Qtd)
 % Se o produto já está no carrinho, devolve a quantidade; senão devolve 0.
@@ -20,7 +23,7 @@ buscar_quantidade_atual(_ProdutoID, _Carrinho, 0).
 substituir_item(ProdutoID, NovaQtd, Carrinho, [item(ProdutoID, NovaQtd) | Resto]) :-
     exclude([item(Id, _)] >> (Id == ProdutoID), Carrinho, Resto).
 
-% Predicados principais 
+% Predicados principais
 
 % visualizar_carrinho(+Catalogo, +Carrinho, -ItensExibicao)
 visualizar_carrinho(_Catalogo, [], []).
@@ -33,7 +36,7 @@ adicionar_ao_carrinho(ProdutoID, Qtd, Catalogo, Carrinho, Resultado) :-
     ( \+ buscar_produto(ProdutoID, Catalogo, _) ->
         Resultado = erro('Erro: Produto inexistente!')
     ;
-        buscar_produto(ProdutoID, Catalogo, produto(ProdutoID, _, _, _, Estoque)),
+        buscar_produto(ProdutoID, Catalogo, produto(ProdutoID, _, _, _, Estoque, _)),
         buscar_quantidade_atual(ProdutoID, Carrinho, QtdAtual),
         QtdTotal is QtdAtual + Qtd,
         ( QtdTotal =< 0 ->
@@ -61,7 +64,7 @@ atualizar_quantidade(ProdutoID, NovaQtd, Catalogo, Carrinho, Resultado) :-
     ( \+ buscar_produto(ProdutoID, Catalogo, _) ->
         Resultado = erro('Erro: Produto inexistente!')
     ;
-        buscar_produto(ProdutoID, Catalogo, produto(ProdutoID, _, _, _, Estoque)),
+        buscar_produto(ProdutoID, Catalogo, produto(ProdutoID, _, _, _, Estoque, _)),
         ( Estoque >= NovaQtd ->
             substituir_item(ProdutoID, NovaQtd, Carrinho, NovoCarrinho),
             Resultado = ok(NovoCarrinho)
