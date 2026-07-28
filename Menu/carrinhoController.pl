@@ -18,4 +18,7 @@ opcoes_do_carrinho(Escolha) :-
         mostrar_tente_novamente,
         pagina_do_usuario ).
 
+ver_carrinho :- 
+    
+
 

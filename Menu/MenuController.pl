@@ -54,14 +54,14 @@ menu_cadastro :-
     read_line_to_string(user_input , Email),
 
     imprimir_arquivo_completo('SpritesMenu/Cadastro/cadastro_senha_menu.txt'),
-    write("Digite seu nome: "),
+    write("Digite sua senha: "),
     read_line_to_string(user_input , Senha),
 
-    cadastrar_novo_usuario(Nome, Email, Senha).
+    cadastrar_novo_usuario(Email, Senha, Nome).
 
 cadastrar_novo_usuario(Email, Senha, Nome) :-
     (verificar_email(Email) -> usuario_ja_cadastrado;
-        cadastrar_usuario(Nome, Email, Senha),
+        cadastrar_usuario(Email, Senha, Nome),
         cadastro_realizado ).
 
 cadastrar_usuario(Email, Senha, Nome) :-
