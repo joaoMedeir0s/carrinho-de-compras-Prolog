@@ -1,4 +1,6 @@
 :- use_module('../utils.pl').
+:- use_module('userController.pl').
+:- set_prolog_flag(source_search_working_directory, false).
 
 % MENU INICIAL-------------------------------------------------------------------------------
 menu_inicial :-
@@ -10,11 +12,11 @@ menu_inicial :-
 opcoes_menu_inicial(Escolha) :-
     string_lower(Escolha, Escolha_minuscula),
     (Escolha_minuscula == "l" 
-        -> menu_login;
-    Escolha_minuscula == "c" 
-        -> menu_cadastro;
-    mostrar_tente_novamente,
-    menu_inicial).
+    -> menu_login
+    ; Escolha_minuscula == "c" 
+    -> menu_cadastro
+    ; mostrar_tente_novamente,
+      menu_inicial).
 
 % LOGIN ----------------------------------------------------------------------------------
 menu_login :-
@@ -55,43 +57,24 @@ menu_cadastro :-
     write("Digite seu nome: "),
     read_line_to_string(user_input , Senha),
 
-    cadastrar_novo_usuario(Email, Senha).
+    cadastrar_novo_usuario(Nome, Email, Senha).
 
-%-PAGINA DO USUARIO -----------------------------------------------------------------------
-pagina_do_usuario :-
-    imprimir_arquivo_completo('SpritesMenu/pagina_do_usuario.txt'),
-    write("Para onde desenha ir? "),
-    read_line_to_string(user_input, Escolha),
-    opcoes_pagina_do_usuario(Escolha).
-
-opcoes_pagina_do_usuario(Escolha) :-
-    string_lower(Escolha, Escolha_Minuscula),
-    (   Escolha_Minuscula == "v" -> catalogo;
-        Escolha_Minuscula == "a" -> acessar_carrinho;
-        Escolha_Minuscula == "f" -> finalizar_compra;
-        Escolha_Minuscula == "s" -> adeus;
-        mostrar_tente_novamente,
-        pagina_do_usuario ).
-    
-
-
-cadastrar_novo_usuario(Email, Senha) :-
+cadastrar_novo_usuario(Email, Senha, Nome) :-
     (verificar_email(Email) -> usuario_ja_cadastrado;
-        cadastrar_usuario(Email, Senha),
+        cadastrar_usuario(Nome, Email, Senha),
         cadastro_realizado ).
 
-cadastrar_usuario(Email, Senha) :-
+cadastrar_usuario(Email, Senha, Nome) :-
     open('SystemData/usuarios.txt', append, Stream),
-    format(Stream, "~w:~w~n", [Email, Senha]),
+    format(Stream, "~w:~w:~w~n", [Email, Senha, Nome]),
     close(Stream).
-
 
 % VERIFICAÇÕES -------------------------------------------------------------------------------- 
 verificar_usuario(Email, Senha) :-
     read_file_to_string('../SystemData/usuarios.txt', Conteudo, []),
     split_string(Conteudo, "\n", "", Linhas),
     member(Linha, Linhas),
-    split_string(Linha, ":", "", [EmailArquivo, SenhaArquivo]),
+    split_string(Linha, ":", "", [EmailArquivo, SenhaArquivo, _NomeArquivo]),
     Email == EmailArquivo,
     Senha == SenhaArquivo.
 
@@ -110,6 +93,8 @@ mostrar_tente_novamente :-
 
 usuario_ja_cadastrado :-
     imprimir_arquivo_completo('SpritesMenu/Cadastro/usuario_ja_existe.txt'),
+    sleep(1.0),
+    imprimir_arquivo_completo('SpritesMenu/tente_novamente.txt'),
     sleep(1.0),
     menu_inicial.
 
