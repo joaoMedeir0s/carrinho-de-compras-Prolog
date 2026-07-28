@@ -1,11 +1,12 @@
 :- module(carrinhoController, [pagina_do_carrinho/0]).
-:- use_module('../utils.pl').
-:- use_module('userController.pl').
+:- use_module(utils, [imprimir_arquivo_completo/1]).
+:- use_module(userController, [pagina_do_usuario/0]).
+:- use_module('Menu/userController.pl').
 
 pagina_do_carrinho :-
-    imprimir_pagina_inteira('SpritesMenu/Carrinho/menu_carrinho.txt'),
+    imprimir_arquivo_completo('SpritesMenu/Carrinho/menu_carrinho.txt'),
     write("Para onde deseja ir? "),
-    read(user_input, Escolha),
+    read_line_to_string(user_input, Escolha),
     opcoes_do_carrinho(Escolha).
 
 opcoes_do_carrinho(Escolha) :-
@@ -16,3 +17,5 @@ opcoes_do_carrinho(Escolha) :-
         Escolha_Minuscula == "s" -> pagina_do_usuario;
         mostrar_tente_novamente,
         pagina_do_usuario ).
+
+

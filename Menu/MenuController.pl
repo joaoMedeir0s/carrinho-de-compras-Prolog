@@ -1,6 +1,6 @@
-:- use_module('../utils.pl').
-:- use_module('userController.pl').
 :- set_prolog_flag(source_search_working_directory, false).
+:- use_module('../utils', [imprimir_arquivo_completo/1]).
+:- use_module(userController, [pagina_do_usuario/0]).
 
 % MENU INICIAL-------------------------------------------------------------------------------
 menu_inicial :-
