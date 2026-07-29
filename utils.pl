@@ -1,5 +1,5 @@
-:- module(utils, [imprimir_arquivo_completo/1
-                  ,mostrar_tente_novamente/0]).
+:- module(utils, [imprimir_arquivo_completo/1,
+                  limpar_arquivo/1]).
 :- use_module(library(dcg/basics)).
 
 imprimir_arquivo_completo(Arquivo) :-
@@ -7,5 +7,6 @@ imprimir_arquivo_completo(Arquivo) :-
     write(Conteudo),
     nl.
 
-mostrar_tente_novamente :-
-    imprimir_arquivo_completo('tente_novamente.txt').
+limpar_arquivo(Arquivo) :-
+    open(Arquivo, write, Stream),
+    close(Stream).

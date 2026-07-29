@@ -1,12 +1,11 @@
-:- module(carrinhoController, [pagina_do_carrinho/0]).
-:- use_module(utils, [imprimir_arquivo_completo/1,
-                      mostrar_tente_novamente/0]).
-:- use_module(userController, [pagina_do_usuario/0]).
+:- module(carrinhoController, [pagina_do_carrinho/0,
+                               carregar_catalogo/2,
+                               carregar_carrinho/2]).
+:- use_module(utils, [imprimir_arquivo_completo/1]).
 :- use_module(carrinho, [adicionar_ao_carrinho/5,
                          item_no_carrinho/2,
                          remover_do_carrinho/3]).
-
-:- use_module('Menu/userController.pl').
+:- use_module(userController, [pagina_do_usuario/0]).
 
 pagina_do_carrinho :-
     imprimir_arquivo_completo('SpritesMenu/Carrinho/menu_carrinho.txt'),
@@ -19,9 +18,10 @@ opcoes_do_carrinho(Escolha) :-
     (   Escolha_Minuscula == "v" -> ver_carrinho;
         Escolha_Minuscula == "a" -> adicionar_no_carrinho;
         Escolha_Minuscula == "r" -> remover_itens;
-        Escolha_Minuscula == "s" -> pagina_do_usuario;
-        mostrar_tente_novamente,
-        pagina_do_usuario ).
+        Escolha_Minuscula == "s" -> userController:pagina_do_usuario;
+        imprimir_arquivo_completo('SpritesMenu/tente_novamente.txt'),
+        sleep(0.7),
+        userController:pagina_do_usuario ).
 
 
 ver_carrinho :-
@@ -60,7 +60,7 @@ adicionar_no_carrinho :-
       Resultado = erro('Quantidade invalida!')
         -> tela_produto_invalido
         ;
-      Resultado = erro(Msg)
+      Resultado = erro(_)
         -> tela_produto_invalido
         ).
 

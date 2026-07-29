@@ -16,7 +16,8 @@ opcoes_menu_inicial(Escolha) :-
     -> menu_login
     ; Escolha_minuscula == "c" 
     -> menu_cadastro
-    ; mostrar_tente_novamente,
+    ; imprimir_arquivo_completo('SpritesMenu/tente_novamente.txt'),
+      sleep(0.8),
       menu_inicial).
 
 % LOGIN ----------------------------------------------------------------------------------
@@ -113,7 +114,13 @@ login_falhou :-
 
 adeus :-
     imprimir_arquivo_completo('SpritesMenu/adeus.txt'),
+    limpar_arquivo('SystemData/usuarios.txt'),
+    limpar_arquivo('SystemData/carrinho.txt'),
     sleep(1.5),
     halt.
+
+limpar_arquivo(Arquivo) :-
+    open(Arquivo, write, Stream),
+    close(Stream).
 
 :- menu_inicial.
