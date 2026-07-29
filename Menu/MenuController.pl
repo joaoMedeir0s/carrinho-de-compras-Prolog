@@ -1,5 +1,6 @@
-:- set_prolog_flag(source_search_working_directory, false).
-:- use_module('../utils', [imprimir_arquivo_completo/1]).
+:- set_prolog_flag(verbose_load, silent).
+:- use_module(utils, [imprimir_arquivo_completo/1,
+                           mostrar_tente_novamente/0]).
 :- use_module(userController, [pagina_do_usuario/0]).
 
 % MENU INICIAL-------------------------------------------------------------------------------
@@ -57,16 +58,16 @@ menu_cadastro :-
     write("Digite sua senha: "),
     read_line_to_string(user_input , Senha),
 
-    cadastrar_novo_usuario(Email, Senha, Nome).
+    cadastrar_novo_usuario(Nome, Email, Senha).
 
-cadastrar_novo_usuario(Email, Senha, Nome) :-
+cadastrar_novo_usuario(Nome, Email, Senha) :-
     (verificar_email(Email) -> usuario_ja_cadastrado;
-        cadastrar_usuario(Email, Senha, Nome),
+        cadastrar_usuario(Nome, Email, Senha),
         cadastro_realizado ).
 
-cadastrar_usuario(Email, Senha, Nome) :-
+cadastrar_usuario(Nome, Email, Senha) :-
     open('SystemData/usuarios.txt', append, Stream),
-    format(Stream, "~w:~w:~w~n", [Email, Senha, Nome]),
+    format(Stream, "~w:~w:~w~n", [Nome, Email, Senha]),
     close(Stream).
 
 % VERIFICAÇÕES -------------------------------------------------------------------------------- 
@@ -74,7 +75,7 @@ verificar_usuario(Email, Senha) :-
     read_file_to_string('../SystemData/usuarios.txt', Conteudo, []),
     split_string(Conteudo, "\n", "", Linhas),
     member(Linha, Linhas),
-    split_string(Linha, ":", "", [EmailArquivo, SenhaArquivo, _NomeArquivo]),
+    split_string(Linha, ":", "", [_NomeArquivo, EmailArquivo, SenhaArquivo]),
     Email == EmailArquivo,
     Senha == SenhaArquivo.
 
@@ -82,14 +83,12 @@ verificar_email(Email) :-
     read_file_to_string('../SystemData/usuarios.txt', Conteudo, []),
     split_string(Conteudo, "\n", "", Linhas),
     member(Linha, Linhas),
-    split_string(Linha, ":", "", [EmailArquivo|_]),
+    split_string(Linha, ":", "", [_NomeArquivo, EmailArquivo|_]),
     Email == EmailArquivo,
     !.
 
 % EXCESSÕES E INTERMEIOS ------------------------------------------------------------------------------------
 
-mostrar_tente_novamente :-
-    imprimir_arquivo_completo('tente_novamente.txt').
 
 usuario_ja_cadastrado :-
     imprimir_arquivo_completo('SpritesMenu/Cadastro/usuario_ja_existe.txt'),

@@ -1,6 +1,7 @@
 :- module(userController, [pagina_do_usuario/0]).
-:- use_module('../utils', [imprimir_arquivo_completo/1]).
-:- use_module(carrinhoController, [pagina_do_carrinho/0]).
+:- use_module('carrinhoController.pl', [pagina_do_carrinho/0]).
+:- use_module('../utils', [imprimir_arquivo_completo/1,
+                           mostrar_tente_novamente/0]).
 
 pagina_do_usuario :-
     imprimir_arquivo_completo('SpritesMenu/pagina_do_usuario.txt'),

@@ -72,3 +72,6 @@ atualizar_quantidade(ProdutoID, NovaQtd, Catalogo, Carrinho, Resultado) :-
             Resultado = erro('Estoque insuficiente!')
         )
     ).
+
+item_no_carrinho(ProdutoID, Carrinho) :-
+    member(item(ProdutoID, _), Carrinho).
