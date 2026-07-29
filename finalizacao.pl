@@ -5,11 +5,15 @@
     calcular_total/3,
     atualizar_estoque_do_pedido/3,
     formatar_itens/2,
-    gerar_mensagem_sucesso/4
+    gerar_mensagem_sucesso/5
 ]).
 
 :- use_module(catalogo, [atualizar_estoque/4]).
 :- use_module(carrinho, [visualizar_carrinho/3]).
+:- use_module(promocao, [
+    calcular_desconto/2,
+    aplicar_desconto/2
+]).
 
 buscar_produto(ProdutoID, Catalogo, Produto) :-
     Produto = produto(ProdutoID, _, _, _, _, _),
@@ -58,10 +62,13 @@ dados_usuario(usuario(Nome, Email, _), Nome, Email) :- !.
 dados_usuario(usuario(Nome, Email), Nome, Email) :- !.
 dados_usuario(Usuario, Usuario, '').
 
-gerar_mensagem_sucesso(Usuario, Itens, Total, Mensagem) :-
+gerar_mensagem_sucesso(Usuario, Itens, Subtotal, Desconto, Mensagem) :-
     dados_usuario(Usuario, Nome, Email),
     formatar_itens(Itens, TextoItens),
     format(atom(LinhaCliente), 'Cliente: ~w (~w)', [Nome, Email]),
+    format(atom(LinhaSubtotal), 'Subtotal: R$ ~2f', [Subtotal]),
+    format(atom(LinhaDesconto), 'Desconto: R$ ~2f', [Desconto]),
+    Total is Subtotal - Desconto,
     format(atom(LinhaTotal), 'Total Pago: R$ ~2f', [Total]),
     atomic_list_concat([
         '===========================================',
@@ -72,6 +79,8 @@ gerar_mensagem_sucesso(Usuario, Itens, Total, Mensagem) :-
         'Itens:',
         TextoItens,
         '-------------------------------------------',
+        LinhaSubtotal,
+        LinhaDesconto,
         LinhaTotal,
         '==========================================='
     ], '\n', Mensagem).
@@ -83,8 +92,10 @@ finalizar_compra(Usuario, Catalogo, Carrinho, Resultado) :-
         Resultado = erro(Mensagem)
     ; ResultadoEstoque = ok(NovoCatalogo) ->
         visualizar_carrinho(Catalogo, Carrinho, Itens),
-        calcular_total(Catalogo, Carrinho, Total),
-        gerar_mensagem_sucesso(Usuario, Itens, Total, Mensagem),
+        calcular_total(Catalogo, Carrinho, Subtotal),
+        calcular_desconto(Subtotal, Desconto),
+        aplicar_desconto(Subtotal, Total),
+        gerar_mensagem_sucesso(Usuario, Itens, Subtotal, Desconto, Mensagem),
         Resumo = resumo_pedido(Usuario, Itens, Total, Mensagem),
         Resultado = ok(NovoCatalogo, Resumo)
     ).
