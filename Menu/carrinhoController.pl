@@ -38,12 +38,15 @@ adicionar_no_carrinho :-
     imprimir_arquivo_completo('SpritesMenu/Carrinho/adicionar_id.txt'),
     write("Digite o ID: "),
     read_line_to_string(user_input, IdStr),
-    number_string(Id, IdStr),
+    ( number_string(Id, IdStr), Id > 0 ->
+        true
+    ; tela_produto_invalido),
 
     imprimir_arquivo_completo('SpritesMenu/Carrinho/adicionar_qant.txt'),
     write("Digite a quantidade: "),
     read_line_to_string(user_input, QantStr),
-    number_string(Qant, QantStr),
+    ( number_string(Qant, QantStr), Qant > 0 -> true
+    ; tela_produto_invalido),
 
     carregar_catalogo('SystemData/catalogo.txt', Catalogo),
     carregar_carrinho('SystemData/carrinho.txt', Carrinho),
@@ -84,7 +87,8 @@ remover_itens :-
     imprimir_arquivo_completo('SpritesMenu/Carrinho/remover_id.txt'),
     writeln('Digite o Id do item: '),
     read_line_to_string(user_input, IdStr),
-    number_string(Id, IdStr),
+    ( number_string(Id, IdStr), Id > 0 -> true
+    ; tela_produto_invalido),
 
     carregar_carrinho('SystemData/carrinho.txt', Carrinho),
 
